@@ -255,6 +255,7 @@ func exe(day string, execCount int) (string, string, error) {
 	out, err := cmd.CombinedOutput()
 	duration := time.Since(start)
 	if err != nil {
+		fmt.Print("\033[33m" + string(out) + "\033[0m")
 		return "", "", err
 	}
 	results := string(out)
