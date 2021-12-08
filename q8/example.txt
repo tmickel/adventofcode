@@ -1,0 +1,17 @@
+  0:      1:      2:      3:      4:
+ <em>aaaa</em>    ....    <em>aaaa    aaaa</em>    ....
+<em>b    c</em>  .    <em>c</em>  .    <em>c</em>  .    <em>c  b    c</em>
+<em>b    c</em>  .    <em>c</em>  .    <em>c</em>  .    <em>c  b    c</em>
+ ....    ....    <em>dddd    dddd    dddd</em>
+<em>e    f</em>  .    <em>f  e</em>    .  .    <em>f</em>  .    <em>f</em>
+<em>e    f</em>  .    <em>f  e</em>    .  .    <em>f</em>  .    <em>f</em>
+ <em>gggg</em>    ....    <em>gggg    gggg</em>    ....
+
+  5:      6:      7:      8:      9:
+ <em>aaaa    aaaa    aaaa    aaaa    aaaa</em>
+<em>b</em>    .  <em>b</em>    .  .    <em>c  b    c  b    c</em>
+<em>b</em>    .  <em>b</em>    .  .    <em>c  b    c  b    c</em>
+ <em>dddd    dddd</em>    ....    <em>dddd    dddd</em>
+.    <em>f  e    f</em>  .    <em>f  e    f</em>  .    <em>f</em>
+.    <em>f  e    f</em>  .    <em>f  e    f</em>  .    <em>f</em>
+ <em>gggg    gggg</em>    ....    <em>gggg    gggg</em>
