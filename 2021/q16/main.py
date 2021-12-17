@@ -76,29 +76,30 @@ class Packet:
     def version_sum(self):
         return self.version + sum([p.version_sum() for p in self.subpackets])
 
-    def exec(self) -> int:
-        if self.type_id == 4:
-            return self.data
-        if self.type_id == 0:
-            return sum((p.exec() for p in self.subpackets))
-        if self.type_id == 1:
-            if len(self.subpackets) == 1:
-                return self.subpackets[0].exec()
-            else:
-                return functools.reduce(lambda a, b: a*b, (p.exec() for p in self.subpackets))
-        if self.type_id == 2:
-            return min((p.exec() for p in self.subpackets))
-        if self.type_id == 3:
-            return max((p.exec() for p in self.subpackets))
-        if self.type_id == 5:
-            return 1 if self.subpackets[0].exec() > self.subpackets[1].exec() else 0
-        if self.type_id == 6:
-            return 1 if self.subpackets[0].exec() < self.subpackets[1].exec() else 0
-        if self.type_id == 7:
-            return 1 if self.subpackets[0].exec() == self.subpackets[1].exec() else 0
+
+def eval(p: Packet) -> int:
+    if p.type_id == 4:
+        return p.data
+    if p.type_id == 0:
+        return sum((eval(pp) for pp in p.subpackets))
+    if p.type_id == 1:
+        if len(p.subpackets) == 1:
+            return eval(p.subpackets[0])
+        else:
+            return functools.reduce(lambda a, b: a*b, (eval(pp) for pp in p.subpackets))
+    if p.type_id == 2:
+        return min((eval(pp) for pp in p.subpackets))
+    if p.type_id == 3:
+        return max((eval(pp) for pp in p.subpackets))
+    if p.type_id == 5:
+        return 1 if eval(p.subpackets[0]) > eval(p.subpackets[1]) else 0
+    if p.type_id == 6:
+        return 1 if eval(p.subpackets[0]) < eval(p.subpackets[1]) else 0
+    if p.type_id == 7:
+        return 1 if eval(p.subpackets[0]) == eval(p.subpackets[1]) else 0
 
 
 p = Packet(raw_packet)
 p.parse()
 print(p.version_sum())
-print(p.exec())
+print(eval(p))
