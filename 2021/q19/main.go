@@ -33,6 +33,10 @@ func main() {
 	}
 
 	scanners[0].happy = true
+	// jamScanners(scanners[0], scanners[1])
+	// jamScanners(scanners[1], scanners[4])
+	// jamScanners(scanners[4], scanners[2])
+	// jamScanners(scanners[1], scanners[3])
 	for {
 		for _, relative := range scanners {
 			if relative.happy {
@@ -43,6 +47,9 @@ func main() {
 					continue
 				}
 				jamScanners(origin, relative)
+				if relative.happy {
+					break
+				}
 			}
 		}
 
@@ -181,119 +188,6 @@ func (p *Point) transform(orientation int) *Point {
 	return nil
 }
 
-func (p *Point) inverseTransform(orientation int) *Point {
-	x := p.x
-	y := p.y
-	z := p.z
-	// +x
-	if orientation == 0 {
-		return &Point{x: x, y: y, z: z}
-	}
-	if orientation == 1 {
-		//return &Point{x: x, y: z, z: -y}
-		return &Point{x: x, y: -z, z: y}
-	}
-	if orientation == 2 {
-		//return &Point{x: x, y: -y, z: -z}
-		return &Point{x: x, y: -y, z: -z}
-	}
-	if orientation == 3 {
-		//return &Point{x: x, y: -z, z: y}
-		return &Point{x: x, y: z, z: -y}
-	}
-
-	// -x
-	if orientation == 4 {
-		//return &Point{x: -x, y: y, z: -z}
-		return &Point{x: -x, y: y, z: -z}
-	}
-	if orientation == 5 {
-		//return &Point{x: -x, y: z, z: y}
-		return &Point{x: -x, y: z, z: y}
-	}
-	if orientation == 6 {
-		//return &Point{x: -x, y: -y, z: z}
-		return &Point{x: -x, y: -y, z: z}
-	}
-	if orientation == 7 {
-		//return &Point{x: -x, y: -z, z: -y}
-		return &Point{x: -x, y: -z, z: -y}
-	}
-
-	// +y
-	if orientation == 8 {
-		//return &Point{x: y, y: x, z: -z}
-		return &Point{x: y, y: x, z: -z}
-	}
-	if orientation == 9 {
-		//return &Point{x: y, y: -x, z: z}
-		return &Point{x: -y, y: x, z: z}
-	}
-	if orientation == 10 {
-		//return &Point{x: y, y: z, z: x}
-		return &Point{x: z, y: x, z: y}
-	}
-	if orientation == 11 {
-		//return &Point{x: y, y: -z, z: -x}
-		return &Point{x: -z, y: x, z: -y}
-	}
-
-	// -y
-	if orientation == 12 {
-		//return &Point{x: -y, y: x, z: z}
-		return &Point{x: y, y: -x, z: z}
-	}
-	if orientation == 13 {
-		//return &Point{x: -y, y: -x, z: -z}
-		return &Point{x: -y, y: -x, z: -z}
-	}
-	if orientation == 14 {
-		//return &Point{x: -y, y: z, z: -x}
-		return &Point{x: -z, y: -x, z: y}
-	}
-	if orientation == 15 {
-		//return &Point{x: -y, y: -z, z: x}
-		return &Point{x: z, y: -x, z: -y}
-	}
-
-	// +z
-	if orientation == 16 {
-		//return &Point{x: z, y: x, z: y}
-		return &Point{x: y, y: z, z: x}
-	}
-	if orientation == 17 {
-		//return &Point{x: z, y: -x, z: -y}
-		return &Point{x: -y, y: -z, z: x}
-	}
-	if orientation == 18 {
-		//return &Point{x: z, y: y, z: -x}
-		return &Point{x: -z, y: y, z: x}
-	}
-	if orientation == 19 {
-		//return &Point{x: z, y: -y, z: x}
-		return &Point{x: z, y: -y, z: x}
-	}
-
-	// -z
-	if orientation == 20 {
-		//return &Point{x: -z, y: x, z: -y}
-		return &Point{x: y, y: -z, z: -x}
-	}
-	if orientation == 21 {
-		//return &Point{x: -z, y: -x, z: y}
-		return &Point{x: -y, y: z, z: -x}
-	}
-	if orientation == 22 {
-		//return &Point{x: -z, y: y, z: x}
-		return &Point{x: z, y: y, z: -x}
-	}
-	if orientation == 23 {
-		//return &Point{x: -z, y: -y, z: -x}
-		return &Point{x: -z, y: -y, z: -x}
-	}
-	return nil
-}
-
 type Scanner struct {
 	readings    []*Point
 	absoluteX   int
@@ -376,13 +270,16 @@ func jamScanners(originScanner, relativeScanner *Scanner) {
 						pt := p.transform(o)
 						for _, q := range originScanner.readings {
 							if q.x == pt.x+i && q.y == pt.y+j && q.z == pt.z+k {
-								// log.Println(q, "matches", p, "@", i, j, k, "o=", o)
 								matches++
 								break
 							}
 						}
 					}
 					if matches >= 12 {
+						relativeScanner.absoluteX = i
+						relativeScanner.absoluteY = j
+						relativeScanner.absoluteZ = k
+
 						newPoints := make([]*Point, 0)
 						for _, p := range relativeScanner.readings {
 							z := p.transform(o)
@@ -394,12 +291,8 @@ func jamScanners(originScanner, relativeScanner *Scanner) {
 						}
 						relativeScanner.readings = newPoints
 
-						// xxx: broken very
-						relativeScanner.absoluteX = originScanner.absoluteX + i
-						relativeScanner.absoluteY = originScanner.absoluteY + j
-						relativeScanner.absoluteZ = originScanner.absoluteZ + k
-
 						relativeScanner.happy = true
+						return
 					}
 				}
 			}
